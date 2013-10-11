@@ -1,0 +1,123 @@
+Simulation ran for 4 iterations at 100 years per iteration
+kangaroo:
+	plains:
+		Average Population: 15
+		Max Population: 30
+		Mortality Rate: 73.42%
+		Cause of Death: 
+			     0%  starvation
+			100.00%  age
+			     0%  thirst
+			     0%  cold_weather
+			     0%  hot_weather
+	forest:
+		Average Population: 12
+		Max Population: 27
+		Mortality Rate: 74.57%
+		Cause of Death: 
+			  2.90%  starvation
+			 97.10%  age
+			     0%  thirst
+			     0%  cold_weather
+			     0%  hot_weather
+	desert:
+		Average Population: 1
+		Max Population: 9
+		Mortality Rate: 95.31%
+		Cause of Death: 
+			     0%  starvation
+			 59.02%  age
+			 40.98%  thirst
+			     0%  cold_weather
+			     0%  hot_weather
+	oasis:
+		Average Population: 36
+		Max Population: 63
+		Mortality Rate: 70.96%
+		Cause of Death: 
+			     0%  starvation
+			100.00%  age
+			     0%  thirst
+			     0%  cold_weather
+			     0%  hot_weather
+	hills:
+		Average Population: 9
+		Max Population: 21
+		Mortality Rate: 81.78%
+		Cause of Death: 
+			     0%  starvation
+			100.00%  age
+			     0%  thirst
+			     0%  cold_weather
+			     0%  hot_weather
+	mountains:
+		Average Population: 0
+		Max Population: 2
+		Mortality Rate: 100.00%
+		Cause of Death: 
+			     0%  starvation
+			     0%  age
+			     0%  thirst
+			100.00%  cold_weather
+			     0%  hot_weather
+bear:
+	plains:
+		Average Population: 18
+		Max Population: 28
+		Mortality Rate: 59.84%
+		Cause of Death: 
+			 37.90%  starvation
+			 62.10%  age
+			     0%  thirst
+			     0%  cold_weather
+			     0%  hot_weather
+	forest:
+		Average Population: 12
+		Max Population: 20
+		Mortality Rate: 63.15%
+		Cause of Death: 
+			 29.89%  starvation
+			 70.11%  age
+			     0%  thirst
+			     0%  cold_weather
+			     0%  hot_weather
+	desert:
+		Average Population: 0
+		Max Population: 2
+		Mortality Rate: 100.00%
+		Cause of Death: 
+			     0%  starvation
+			     0%  age
+			     0%  thirst
+			     0%  cold_weather
+			100.00%  hot_weather
+	oasis:
+		Average Population: 0
+		Max Population: 2
+		Mortality Rate: 100.00%
+		Cause of Death: 
+			     0%  starvation
+			     0%  age
+			     0%  thirst
+			     0%  cold_weather
+			100.00%  hot_weather
+	hills:
+		Average Population: 20
+		Max Population: 27
+		Mortality Rate: 56.66%
+		Cause of Death: 
+			 34.43%  starvation
+			 65.57%  age
+			     0%  thirst
+			     0%  cold_weather
+			     0%  hot_weather
+	mountains:
+		Average Population: 15
+		Max Population: 23
+		Mortality Rate: 53.79%
+		Cause of Death: 
+			 24.39%  starvation
+			 75.61%  age
+			     0%  thirst
+			     0%  cold_weather
+			     0%  hot_weather
