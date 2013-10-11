@@ -7,13 +7,21 @@
 ### REQUIRES
 
 require 'yaml'
-require_relative 'Element'
-require_relative 'Species'
-require_relative 'Habitat'
+require_relative 'Ecosystem'
 
 ### CONSTANTS 
 
 FILE_CONFIG = './Data.yaml'
+
+### PATCHES
+
+class String
+  # adding ucfirst method to string
+  def ucfirst
+    self.sub(/^\w/) { |string| string.capitalize }
+  end
+end
+
 
 
 ### MAIN
@@ -40,7 +48,11 @@ ensure
 
 end
 
-# create habitats and species
-species = Species.new parsed
+# mix habitats and species methods into their respective hashes
 
-p parsed
+%w{ species habitats }.each do |type|
+  config[type].each do |element|
+    element.extend(Object.const_get(type.ucfirst))
+    puts element.hello
+  end
+end
