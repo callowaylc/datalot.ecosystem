@@ -1,0 +1,9 @@
+# Author: Christian Calloway
+
+module Ecosystem
+
+  # Represents an element in the ecosystem
+  class Element < Hash
+  end
+
+end

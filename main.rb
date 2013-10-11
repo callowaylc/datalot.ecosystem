@@ -7,6 +7,7 @@
 ### REQUIRES
 
 require 'yaml'
+require_relative 'Element'
 require_relative 'Species'
 require_relative 'Habitat'
 
@@ -17,9 +18,13 @@ FILE_CONFIG = './Data.yaml'
 
 ### MAIN
 
-# parse yaml file and bind to config variable
+# include ecosystem module/namespace
 
-parsed = begin
+include Ecosystem
+
+# parse yaml file and bind hash instance to config variable
+
+config = begin
   YAML.load file = open(FILE_CONFIG)
 
 rescue ArgumentError => e
@@ -35,4 +40,7 @@ ensure
 
 end
 
-puts parsed.class
+# create habitats and species
+species = Species.new parsed
+
+p parsed
