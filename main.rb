@@ -7,6 +7,7 @@
 ### REQUIRES
 
 require 'yaml'
+require 'active_support/all'
 require_relative 'Ecosystem'
 
 ### CONSTANTS 
@@ -50,9 +51,9 @@ end
 
 # mix habitats and species methods into their respective hashes
 
-%w{ species habitats }.each do |type|
-  config[type].each do |element|
-    element.extend(Object.const_get(type.ucfirst))
-    puts element.hello
-  end
-end
+#%w{ species habitats }.each do |type|
+#  config[type].each do |element|
+#    element.extend(Object.const_get(type.ucfirst))
+#    puts element.hello
+#  end
+#end
