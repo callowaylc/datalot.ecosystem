@@ -6,7 +6,6 @@ module Ecosystem
 
   # creates a new builder instance and passes block
   def build(&block)
-    raise "Failed to pass required block" unless block
     Builder.new(block)
   end
 
@@ -14,26 +13,40 @@ module Ecosystem
   # be iterated over
   class Builder
 
-    def initialize(block)
-      @cycler = Cycler.new
+    def initialize(&block)
+      @simulation = Simulator.new
       instance_eval(block)
     end
 
     def a(habitat)
-      @cycler.habitat = Habitat.new habitat
+      @simulation.habitat = Habitat.new habitat
     end 
 
+    # determine species and then add adam/eve
+    # to the mix
     def for(species)
-      @cycler.species = Species.new species
-    def 
+      @simulation.species = Species.new species
+
+      habitat << adam << eve
+    end
+
+    private
+
+    def adam
+      @simulation.species.animal :male
+    end
+
+    def eve
+      @simulation.species.animal :female
+    end 
+
   end
 
   # provides fluent interface for cycling over time interval
-  class Cycler
+  class Simulator
     attr_accessor :years, :iterations
 
     def cycle(&block)
-      raise "Failed to pass required block" unless block
       instance_eval(block)
     end
 
@@ -44,21 +57,80 @@ module Ecosystem
     def for(iterations)
       @iterations = iterations
     end
-  end
 
- class Element 
-    
-  end
+    # gets results and yields them 
+    def then
+      results = nil
 
-  class Animal < Element
-    attr_accessor :sex
+      # create a new ticker, set timespan, and then
+      # tick over intervals
+      ticker = Ticker.new(@years)
+      ticker.tick do |t|
 
-    def initialize(sex = nil)
-      # determine sex, unless overriden
-      @sex = [ :male, :female ].sample unless sex
+        # run update on simulation with time context
+        update Time.new(t.current)
+      end until ticker.is_done?
+
+      # finally yield with results
+      yield(results) if block_given
     end
 
+    private 
+
+    def update(time)
+
+      # notify observers that simulation is updating
+      notify
+    end
+  end
+
+  class Facet 
+
+    def initialize(hash)
+      @profile = hash
+    end  
+
+    # provides access to profile/hash
+    def [](key)
+      @profile[key]
+    end
+  end
+
+  # Represents a single habitat-type
+  class Habitat < Facet
+    attr_accessor :species, :animals
+
+    # provides default for animals without overriding
+    # constructor
+    def animals
+      @animals ||= [ ]
+    end
+
+    # convenience override for 
+    def <<(animal)
+      @animals << animal
+    end
+
+  end  
+
+  # Represents a single species-type
+  class Species < Facet
+    
+    # creates a new animal of species type
+    def animal(sex:[ :male, :female ].sample)
+      Animal.new do |animal|
+        animal.sex     = sex
+        animal.species = self
+      end 
+    end
+  end
+
+  # Represents a single animal
+  class Animal
+    attr_accessor :sex, :species
+
     def female?
+      @sex == :female
     end
 
     def survive?
@@ -73,11 +145,23 @@ module Ecosystem
     def age
     end
 
+    def die
+    end
+
+    # represents a birth; which changes gestation status
+    # and returns new animal
+    def birth
+      # raise issue if we are not a female
+      raise "NaN.. er NaF" unless female?
+
+      # change gestation status
+
+      # return new animal
+      @species.animal
+    end
+
   end
 
-  class Habitat < Element
-    attr_accessor :species, :animals
-  end  
 
   module Observers
 
@@ -106,9 +190,15 @@ module Ecosystem
 
   end
 
+  # Represents current time in the ecosystem and provides
+  # utility methods within that context
+  class Time
+  end
+
 
   # Represents intervals of time passing during simulation
   class Ticker
+    attr_accessor :current
 
     # mixin observable module; this will be used to update
     # habitat and species after interval events
@@ -118,12 +208,10 @@ module Ecosystem
     # we set as a constant
     INTERVAL = 1.month
 
-    # provide attribute accessor for total time
-    attr_accessor :total
-
-    # initialize time and set current time interval to 0
-    def initialize
+    # initialize time and set current time
+    def initialize(years)
       @current = 0
+      @years   = years
 
       # add observers for tick events
       add_observer(Observers::Species.instance)
@@ -141,13 +229,16 @@ module Ecosystem
       # here which tightly couples Ticker to observer but in the 
       # interest of a solution..
       notify_observers(habitat)
-
-
     end
 
     # determines if there is time left in current iteration
     def is_done?
       @current >= @total
+    end
+
+    # reset ticker to 0 time
+    def reset
+      @current = 0
     end
 
   end

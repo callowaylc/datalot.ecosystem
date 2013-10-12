@@ -60,14 +60,19 @@ config.species.each do |species|
     # build ecosystem instance
     ecosystem = Ecosystem::build {
       a    habitat
-      with species
+      for  species
     }
 
-    # now cycle over iterations/years; I dont know if I really like this
-    # interface
-    ecosystem.cycle { over config.years }.for(config.iterations) do | result |
-      puts result
-    end
+    # now cycle over iterations/years; use results defined to_s method
+    # to print to stdout
+    ecosystem.cycle { 
+      over config.years 
+      for  config.iterations
+
+      then { |result| puts result } 
+    }
+
+
 
   
 
