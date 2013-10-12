@@ -31,7 +31,6 @@ module Ecosystem
     end
 
     private
-
     def adam
       @simulation.species.animal :male
     end
@@ -69,6 +68,7 @@ module Ecosystem
 
         # run update on simulation with time context
         update Time.new(t.current)
+
       end until ticker.is_done?
 
       # finally yield with results
@@ -78,10 +78,12 @@ module Ecosystem
     private 
 
     def update(time)
+      # do updatin
 
       # notify observers that simulation is updating
-      notify
+      notify_observers(self, time)
     end
+
   end
 
   class Facet 
@@ -106,9 +108,13 @@ module Ecosystem
       @animals ||= [ ]
     end
 
-    # convenience override for 
+    # convenience override for << operator to add animals
+    # to habitat 
     def <<(animal)
       @animals << animal
+
+      # return self so we can chain 
+      self
     end
 
   end  
@@ -169,16 +175,16 @@ module Ecosystem
       include Singleton
     end
 
-    # individual species?
+    # responsible for updating species specific context
     class Species < Observer
       
-      def update()
-      
+      def update(simulation, time)
       end
       
       
     end
 
+    # responsible for updating habitat specific context
     class Habitat < Observer
       def update(habitat)
         
