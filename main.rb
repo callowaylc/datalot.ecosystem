@@ -56,14 +56,20 @@ end
 
 config.species.each do |species|
   config.habitats.each do |habitat| 
-    puts Ecosystem::Builder.new do 
-      in   habitat
+
+    # build ecosystem instance
+    ecosystem = Ecosystem::build {
+      a    habitat
       with species
+    }
+
+    # now cycle over iterations/years; I dont know if I really like this
+    # interface
+    ecosystem.cycle { over config.years }.for(config.iterations) do | result |
+      puts result
     end
+
+  
+
   end
 end
-
-end
-
-
-
