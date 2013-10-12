@@ -1,19 +1,35 @@
 # Author: Christian Calloway callowaylc@gmail
 require 'Observable'
+require 'singleton'
 
 module Ecosystem
 
-  # provides utility methods that can be mixed into hash
-  # data for habitats and species
-  module Attributes
 
-    # Represents a habitat in the ecosystem; plurality is just for
-    # an easy match on data 
-    module Habitats 
+  module Observers
+
+    class Observer
+      include Singleton
     end
 
-    module Species
+    # individual species?
+    class Species < Observer
+      
+      def update()
+      
+      end
+      
+      
     end
+
+    class Habitat < Observer
+      def update(habitat)
+        
+        # determine which groups of species need to be
+        # culled 
+      end
+    end
+
+
   end
 
   class History 
@@ -39,10 +55,13 @@ module Ecosystem
       @current = 0
 
       # add observers for tick events
+      add_observer(Observers::Species.instance)
+      add_observer(Observers::Habitat.instance)
+
     end    
 
     # iterate the passage of time by interval constant
-    def tick
+    def tick(habitat)
 
       # increment time
       @current += INTERVAL 
@@ -50,41 +69,51 @@ module Ecosystem
       # notify observers of the passage of time; we are passing self
       # here which tightly couples Ticker to observer but in the 
       # interest of a solution..
-      notify_observers(self)
+      notify_observers(habitat)
 
 
     end
 
     # determines if there is time left in current iteration
-    def is_left?
+    def is_done?
       @current >= @total
     end
+
   end
 
-  class Animal
+  class Element 
+    
+  end
+
+  class Animal < Element
     attr_accessor :sex
+
+    def initialize(sex = nil)
+      # determine sex, unless overriden
+      @sex = [ :male, :female ].sample unless sex
+    end
 
     def female?
     end
 
+    def survive?
+    end
+
+    def eat(habitat)
+    end
+
+    def drink(habitat)
+    end
+
+    def age
+    end
+
   end
 
-  class Habitat
+  class Habitat < Element
 
-    attr_accessor :animals
+    attr_accessor :species, :animals
 
-    def initialize
-      # add adam/eve 
-      @animals = [ ]
-
-
-    end
-
-    def refresh
-    end
-
-    def temperature
-    end
 
   end
 

@@ -27,10 +27,6 @@ end
 
 ### MAIN
 
-# include ecosystem module/namespace
-
-include Ecosystem
-
 # parse yaml file and bind hash instance to config variable
 
 config = begin
@@ -57,3 +53,17 @@ end
 #    puts element.hello
 #  end
 #end
+
+config.species.each do |species|
+  config.habitats.each do |habitat| 
+    puts Ecosystem::Builder.new do 
+      in   habitat
+      with species
+    end
+  end
+end
+
+end
+
+
+
