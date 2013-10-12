@@ -4,6 +4,80 @@ require 'singleton'
 
 module Ecosystem
 
+  # creates a new builder instance and passes block
+  def build(&block)
+    raise "Failed to pass required block" unless block
+    Builder.new(block)
+  end
+
+  # provides fluent interface for building ecosystem cycle instance that can 
+  # be iterated over
+  class Builder
+
+    def initialize(block)
+      @cycler = Cycler.new
+      instance_eval(block)
+    end
+
+    def a(habitat)
+      @cycler.habitat = Habitat.new habitat
+    end 
+
+    def for(species)
+      @cycler.species = Species.new species
+    def 
+  end
+
+  # provides fluent interface for cycling over time interval
+  class Cycler
+    attr_accessor :years, :iterations
+
+    def cycle(&block)
+      raise "Failed to pass required block" unless block
+      instance_eval(block)
+    end
+
+    def over(years)
+      @years = years
+    end
+
+    def for(iterations)
+      @iterations = iterations
+    end
+  end
+
+ class Element 
+    
+  end
+
+  class Animal < Element
+    attr_accessor :sex
+
+    def initialize(sex = nil)
+      # determine sex, unless overriden
+      @sex = [ :male, :female ].sample unless sex
+    end
+
+    def female?
+    end
+
+    def survive?
+    end
+
+    def eat(habitat)
+    end
+
+    def drink(habitat)
+    end
+
+    def age
+    end
+
+  end
+
+  class Habitat < Element
+    attr_accessor :species, :animals
+  end  
 
   module Observers
 
@@ -32,9 +106,6 @@ module Ecosystem
 
   end
 
-  class History 
-
-  end
 
   # Represents intervals of time passing during simulation
   class Ticker
@@ -81,40 +152,6 @@ module Ecosystem
 
   end
 
-  class Element 
-    
-  end
-
-  class Animal < Element
-    attr_accessor :sex
-
-    def initialize(sex = nil)
-      # determine sex, unless overriden
-      @sex = [ :male, :female ].sample unless sex
-    end
-
-    def female?
-    end
-
-    def survive?
-    end
-
-    def eat(habitat)
-    end
-
-    def drink(habitat)
-    end
-
-    def age
-    end
-
-  end
-
-  class Habitat < Element
-
-    attr_accessor :species, :animals
-
-
-  end
+ 
 
 end
