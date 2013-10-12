@@ -128,24 +128,41 @@ module Ecosystem
         animal.sex     = sex
         animal.species = self
       end 
+
     end
   end
 
   # Represents a single animal
   class Animal
     attr_accessor :sex, :species
+    
+    attr_accessor_with_default :age,        0 
+    attr_accessor_with_default :gestation,  0
+    attr_accessor_with_default :starvation, 0
+    attr_accessor_with_default :thirst,     0
+    attr_accessor_with_default :exposure,   0
+
+
+
+    def initialize
+      yield(self) if block_given?
+    end
 
     def female?
       @sex == :female
     end
 
-    def survive?
+    def survived?
+
     end
 
-    def eat(habitat)
+    def died_of
     end
 
-    def drink(habitat)
+    def eat_from(habitat)
+    end
+
+    def drink_from(habitat)
     end
 
     def age
@@ -186,10 +203,18 @@ module Ecosystem
 
     # responsible for updating habitat specific context
     class Habitat < Observer
-      def update(habitat)
+      def update(simulation, time)
         
-        # determine which groups of species need to be
-        # culled 
+        # iterate through shuffled list of animals so preference
+        # to resources is not based on queue order
+        simulation.habitat.animals.shuffle.each do |animal|
+
+          # first we check the parameters of death, namely
+          # has the species aged 
+        end
+
+
+
       end
     end
 
@@ -199,6 +224,11 @@ module Ecosystem
   # Represents current time in the ecosystem and provides
   # utility methods within that context
   class Time
+
+    def season
+    end
+
+
   end
 
 

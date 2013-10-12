@@ -1,9 +1,10 @@
 class Test
-  attr_accessor :test
 
+  def initialize(&block)
+    @property = 'hello'
+
+    instance_exec 'suckit', &block
+  end
 end
 
-t = Test.new
-t.test << 1
-
-puts t.test
+t = Test.new { |argument| puts argument; puts @property }

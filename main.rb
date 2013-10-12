@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# @author Christian Calloway callowaylc@gmail
+# Author: Christian Calloway callowaylc@gmail
 
 # Description here
 
@@ -8,22 +8,14 @@
 
 require 'yaml'
 require 'active_support/all'
+
+require_relative 'Utilities'
 require_relative 'Ecosystem'
+
 
 ### CONSTANTS 
 
 FILE_CONFIG = './Data.yaml'
-
-### PATCHES
-
-class String
-  # adding ucfirst method to string
-  def ucfirst
-    self.sub(/^\w/) { |string| string.capitalize }
-  end
-end
-
-
 
 ### MAIN
 
@@ -45,14 +37,8 @@ ensure
 
 end
 
-# mix habitats and species methods into their respective hashes
-
-#%w{ species habitats }.each do |type|
-#  config[type].each do |element|
-#    element.extend(Object.const_get(type.ucfirst))
-#    puts element.hello
-#  end
-#end
+# iterate across species/habitats and build individual
+# ecosystems for each
 
 config.species.each do |species|
   config.habitats.each do |habitat| 
@@ -65,16 +51,12 @@ config.species.each do |species|
 
     # now cycle over iterations/years; use results defined to_s method
     # to print to stdout
-    ecosystem.cycle { 
-      over config.years 
-      for  config.iterations
+    ecosystem.simulate { 
+      for   config.years 
+      over  config.iterations
 
       then { |result| puts result } 
     }
-
-
-
-  
 
   end
 end
