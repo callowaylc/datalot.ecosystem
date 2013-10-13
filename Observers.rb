@@ -12,8 +12,9 @@ module Ecosystem
     # responsible for updating species specific context
     class Species < Observer
       
-      def update(simulation, time, interval)
-        animals = simulation.habitat.animals
+      def update(simulation, time)
+        animals  = simulation.habitat.animals
+        interval = time.interval
 
         # iterate through animals
         animals.each do |animal|
@@ -36,8 +37,16 @@ module Ecosystem
 
     # responsible for updating habitat specific context
     class Habitat < Observer
-      def update(simulation, time, interval)
-        habitat = simulation.habitat
+      def update(simulation, time)
+        habitat  = simulation.habitat        
+        interval = time.interval
+
+        # assign current time to habitat
+        # @todo remove this later because habitat should not be contextually
+        # aware of time, but is needed now to perform uniform operations on
+        # habitat
+        habitat.time = time
+
         
         # DEATH ###############################################################
         # iterate through shuffled list of animals 
@@ -47,7 +56,13 @@ module Ecosystem
           # we do this by iterating through an array of symbol representing
           # interactions with the environment - before running an interaction
           # we check if the animal is still alive
+          died = false
 
+
+          handle_death = lambda do |cause|
+            habitat.remove animal
+            history.note_a :death, from: cause
+          end
 
           # @note I'd like to encapsulate the metrics of death here
           # @note below is awkward; need to change interface
@@ -61,7 +76,7 @@ module Ecosystem
             # first thing we need to check is if the animal died;
             # if the case, we remove from habitat and note cause
             # of death
-            died = animal.died? do |cause|
+            if died = animal.died? &handle_death
               # remove from habitat
               habitat.remove animal
 
@@ -87,12 +102,18 @@ module Ecosystem
          
           end
 
-          animal.eats_from   habitat or animal.starves_for interval
-          animal.drinks_from habitat or animal.thirsts_for interval
+          # check if animal died after last iteration
+          # @todo this is really awkward and we need to update the interface
+          # for checking animal death
+          died || animal.died? do |cause|
+            # remove from habitat
+            habitat.remove animal
 
-          # second-to-last we cull animal if it has reached a point
-          # where it can no longer survive
-         
+            # store history of cause of death
+            # still need to determine how this looks
+            history.something cause  
+          end
+
         end
 
         # MATING AND DELIVERY #################################################

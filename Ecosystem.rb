@@ -97,13 +97,13 @@ module Ecosystem
   # Represents current time in the ecosystem and encapsulates broader
   # concepts like season
   # @note we should just use open struct here to automate initialize
-  # @note we are assuming hardcoded intervals here; this should be changed
+  # @note we are assuming hardcoded interval types here; this should be changed
   class Time
+    attr_accessor :interval
     
-    def initialize(current, interval, interval_type)
-      @current  = current
-      @interval = interval
-      @interval_type = interval_type
+    def initialize(current, interval)
+      @current      = current
+      self.interval = interval
     end
 
     def current_year
@@ -171,7 +171,7 @@ module Ecosystem
       # interest of a solution..
       # @note passing interval here helps decouple observers from ticker,
       # but we shouldnt have to pass the same value repeatedly..
-      notify_observers habitat, Time.new(@current, INTERVAL, :months)
+      notify_observers habitat, Time.new(@current, INTERVAL)
     end
 
     # determines if there is time left in current iteration

@@ -17,7 +17,7 @@ module Ecosystem
 
   # Represents a single habitat-type
   class Habitat < Facet
-    attr_accessor :food, :water
+    attr_accessor :food, :water, :time
     attr_accessor_with_default :animals, { }
 
     def initialize(hash)
@@ -58,13 +58,13 @@ module Ecosystem
 
 
     # determine current temperature given current time of year
-    def temperature(month)
+    def temperature
 
       # get base temperature and random temperature swing value;
       # swing value will have a .5% value 
       # @note we are assuming month is a symbol - we may want
       # to do an explicit check here
-      base  = self['attributes'][month.to_s].to_i
+      base  = self['attributes'][self.time.current_month.to_s].to_i
       swing = rand <= .005 
         ? [*0..15].sample.to_f
         : [*0..5].sample.to_f
@@ -200,12 +200,12 @@ module Ecosystem
     end
 
     # checks exposure against current temperature
-    def exposed_to(habitat)
+    def exposed_to(temperature)
       # just performing a shortcut here
       a = self['attributes']
 
       # if temperature in acceptible range reset exposure, otherwise increment exposure
-      self.exposure = (success = a['minimum_temperature']..a['maximum_temperature']).include? habitat.temperature)
+      self.exposure = (success = a['minimum_temperature']..a['maximum_temperature']).include? temperature)
         ? 0
         : self.exposure += 1
 
