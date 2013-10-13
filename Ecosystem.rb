@@ -94,9 +94,25 @@ module Ecosystem
   end
 
 
-  # Represents current time in the ecosystem and provides
-  # utility methods within that context
+  # Represents current time in the ecosystem and encapsulates broader
+  # concepts like season
   class Time
+    attr_accessor :time_passed
+
+    def initialize(current, interval)
+      @current  = current
+      @interval = interval
+    end
+
+    # determine current year
+    def year
+    end
+
+    # determine number of years passed
+    def years
+    end 
+
+    # determine season within current year
     def season
     end
   end
@@ -104,8 +120,6 @@ module Ecosystem
 
   # Represents intervals of time passing during simulation
   class Ticker
-    attr_accessor :current
-
     # mixin observable module; this will be used to update
     # habitat and species after interval events
     include Observable
@@ -134,7 +148,9 @@ module Ecosystem
       # notify observers of the passage of time; we are passing self
       # here which tightly couples Ticker to observer but in the 
       # interest of a solution..
-      notify_observers(habitat)
+      # @note passing interval here helps decouple observers from ticker,
+      # but we shouldnt have to pass the same value repeatedly..
+      notify_observers(habitat, Time.new @current, INTERVAL)
     end
 
     # determines if there is time left in current iteration
