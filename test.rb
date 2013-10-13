@@ -1,7 +1,9 @@
 
-h = { a: 'a', b: 'b', c: 'c' }
+bool  = true
+value = nil
 
-k = nil
-h.each { |key, value| k = key}
-  
-puts k
+if value = bool
+  puts 'true'
+end
+
+p value
