@@ -52,9 +52,30 @@ module Ecosystem
       raise 'Species has expired' unless animal
 
 
-      self.food   >= animal.species['attributes']['monthly_food_consumption'].to_i &&
+      self.food   >= animal.species['attributes']['monthly_food_consumption'].to_i  &&
       self.water  >= animal.species['attributes']['monthly_water_consumption'].to_i 
     end
+
+
+    # determine current temperature given current time of year
+    def temperature(month)
+
+      # get base temperature and random temperature swing value;
+      # swing value will have a .5% value 
+      # @note we are assuming month is a symbol - we may want
+      # to do an explicit check here
+      base  = self['attributes'][month.to_s].to_i
+      swing = rand <= .005 
+        ? [*0..15].sample.to_f
+        : [*0..5].sample.to_f
+
+      # calculate and return 
+      base + ( swing / base * [ -1, 1 ].sample ) 
+
+
+    end
+
+
 
 
     # return shuffled group of animals so we can avoid issues
@@ -178,6 +199,20 @@ module Ecosystem
       died
     end
 
+    # checks exposure against current temperature
+    def exposed_to(habitat)
+      # just performing a shortcut here
+      a = self['attributes']
+
+      # if temperature in acceptible range reset exposure, otherwise increment exposure
+      self.exposure = (success = a['minimum_temperature']..a['maximum_temperature']).include? habitat.temperature)
+        ? 0
+        : self.exposure += 1
+
+      success
+    end
+
+
     # attempts to eat from habitat; returns false
     # if habitats food is depleted
     def eats_from(habitat)
@@ -229,7 +264,8 @@ module Ecosystem
       self.gestation += interval
     end
 
-    def die
+    def exposed_for(interval)
+      self.exposure += interval
     end
 
 

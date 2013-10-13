@@ -43,22 +43,56 @@ module Ecosystem
         # iterate through shuffled list of animals 
         habitat.animals.each do |animal|
 
-          # first we address consumption
-          # @note I'd like to encapsulate the metrics of death
+          # first we address an animals interactions with the habitat;
+          # we do this by iterating through an array of symbol representing
+          # interactions with the environment - before running an interaction
+          # we check if the animal is still alive
+
+
+          # @note I'd like to encapsulate the metrics of death here
+          # @note below is awkward; need to change interface
+          interactions = [
+            %i{ eats_from   starves_for }
+            %i{ drinks_from thirsts_for }
+            %i{ exposed_to  exposed_for }
+          
+          ].each do |actions|
+
+            # first thing we need to check is if the animal died;
+            # if the case, we remove from habitat and note cause
+            # of death
+            died = animal.died? do |cause|
+              # remove from habitat
+              habitat.remove animal
+
+              # store history of cause of death
+              # still need to determine how this looks
+              history.something cause
+            
+            # otherwise the animal is still alive and we perform an interaction
+            # on the environment
+            end or begin       
+
+              # assigning to scalars to make a bit more interactive
+              interacts_with, suffers_for = actions
+
+              # perform actual interaction or increment intervals of suffering
+              animal.send(interacts_with, habitat) or animal.send(suffers_for, interval)
+            end
+
+            # if our animal has died we break from a "interactions"
+            # loop as the animal obviously no longer needs to interact
+            # with the environment
+            died && break
+         
+          end
+
           animal.eats_from   habitat or animal.starves_for interval
           animal.drinks_from habitat or animal.thirsts_for interval
 
           # second-to-last we cull animal if it has reached a point
           # where it can no longer survive
-          animal.died? do |cause|
-            # remove from habitat
-            habitat.remove animal
-
-            # store history of cause of death
-            # still need to determine how this looks
-            history.something cause
-
-          end          
+         
         end
 
         # MATING AND DELIVERY #################################################
