@@ -19,12 +19,12 @@ module Ecosystem
         animals.each do |animal|
 
           # age our animals for given time interval
-          animal.age += interval
+          animal.ages_for interval
 
           # check if animal is in a fertile period and
           # currently in the gestation process  
           if animal.female? && animal.pregnant?
-            animal.gestation += interval
+            animal.gestates_for interval
           end
 
 
@@ -39,6 +39,7 @@ module Ecosystem
       def update(simulation, time, interval)
         habitat = simulation.habitat
         
+        # DEATH ###############################################################
         # iterate through shuffled list of animals 
         habitat.animals.each do |animal|
 
@@ -55,38 +56,38 @@ module Ecosystem
 
             # store history of cause of death
             # still need to determine how this looks
+            history.something cause
+
           end          
         end
 
-        # finally, we determine if habitat can support further 
-        # breeding
+        # MATING AND DELIVERY #################################################
+        # determine if habitat can support further breeding; if
+        # the case, find available mates left in population
         unless habitat.depleted?
 
-          # find available candidates within female population 
-          females = habitat.females.reject { |animal| animal.pregnant? }
+          # find available candidates within female/male population 
+          females = habitat.females.reject { |animal| animal.pregnant? || !animal.fertile? }
+          males   = habitat.males.select { |animal| animal.fertile? }
 
           # now slice that available population 
-          females.slice(0, habitat.males.length).each do |female|
-
+          females.slice(0, males.length).each do |female|
+            female.mate males.sample
           end
 
-            # iterate through number of males and start gestation process
-
-          end
-
-          # iterate through available males 
         end         
 
-        # of surviving animals, retrieve females and determine
-        # if any are in gestation
-        pregnant = simulation.habitat.females.select do |female|
-          female.pregnant?
+        # finally check all pregnant females who have reached 
+        # the end of gestation period
+        habitat.females.select { |female| female.pregnant? }.each do |female|
+          female.deliver do |animal|
+            habitat << animal
+
+          end if female.is_ready_to_deliver?
         end
 
-        pregnant.each do |female|
-
-        end
-
+        # HISTORY/METRICS #####################################################
+        # record population metrics in history
 
       end
     end

@@ -17,7 +17,7 @@ module Ecosystem
 
   # Represents a single habitat-type
   class Habitat < Facet
-    attr_accessor :species, :food, :water
+    attr_accessor :food, :water
     attr_accessor_with_default :animals, { }
 
     def initialize(hash)
@@ -40,10 +40,20 @@ module Ecosystem
       @animals.delete animal
     end
 
-    # determines if habitat is "supportive", which equates to whether
-    # current food/water levels can support current popuation
-    def supportive?
+    # determines if habitat has been depleted to
+    # the point that it can no longer support continued 
+    # expansion of species
+    def depleted?
+      # since this question addresses whether a habitat can
+      # support additional species, we check resources against
+      # the additional of a single species
+      # @note do we need to address case of species extinction here??
+      animal = self.animals.first
+      raise 'Species has expired' unless animal
 
+
+      self.food   >= animal.species['attributes']['monthly_food_consumption'].to_i &&
+      self.water  >= animal.species['attributes']['monthly_water_consumption'].to_i 
     end
 
 
@@ -72,8 +82,8 @@ module Ecosystem
 
     # refreshes food/water store based on profile
     def refresh
-      self.food  = self['attributes']['monthly_food']
-      self.water = self['attributes']['monthly_water']
+      self.food  = self['attributes']['monthly_food'].to_i
+      self.water = self['attributes']['monthly_water'].to_i
     end
 
   end  
@@ -127,7 +137,7 @@ module Ecosystem
     attr_accessor_with_default :thirst,     0
     attr_accessor_with_default :exposure,   0
     attr_accessor_with_default :gestation,  0
-    
+    attr_accessor_with_default :pregnant,   false
 
 
     def initialize
@@ -139,8 +149,8 @@ module Ecosystem
     end
 
     def fertile?
-      @age >= self['attributes']['minimum_breeding_age'] &&
-      @age <= self['attributes']['maximum_breeding_age']
+      self.age >= self.species['attributes']['minimum_breeding_age'].to_i &&
+      self.age <= self.species['attributes']['maximum_breeding_age'].to_i
     end
 
     # determines if animal survived given current properties
@@ -171,7 +181,7 @@ module Ecosystem
     # attempts to eat from habitat; returns false
     # if habitats food is depleted
     def eats_from(habitat)
-      requires = self['attributes']['monthly_food_consumption'].to_i
+      requires = self.species['attributes']['monthly_food_consumption'].to_i
 
       # debit from food store if habitat can current support food
       # requirement for single animal  
@@ -189,7 +199,7 @@ module Ecosystem
     # habitats water is depleted
     # @note too much copy pasta from eats_from
     def drinks_from(habitat)
-      requires = self['attributes']['monthly_water_consumption'].to_i
+      requires = self.species['attributes']['monthly_water_consumption'].to_i
 
       # debit from food store if habitat can current support food
       # requirement for single animal  
@@ -203,29 +213,77 @@ module Ecosystem
       succeeds      
     end
 
+    def starves_for(interval)
+      self.starvation += interval
+    end
+
+    def thirsts_for(interval)
+      self.thirst += interval
+    end
+
+    def ages_for(interval)
+      self.age += interval
+    end
+
+    def gestates_for(interval)
+      self.gestation += interval
+    end
 
     def die
     end
 
+
     # represents the mating act between two animals; is contextually
     # aware of current self sex
     def mate(animal)
+      if female?
+        self.pregnant = true
 
+      else
+        # @note if a male, we can keep track of child/parent relationshiops
+        # @pass
+
+      end
+    end
+
+    # @note problem with methods below is they do not fit into
+    # context of a male member of the species; abstraction should
+    # reflect this - revisit
+
+    # checks to determine if female is pregnant
+    def pregnant?
+      assert_female
+
+      self.pregnant == true
+    end
+
+    # checks to determine if female has reached gestation period
+    def is_ready_to_deliver
+      assert_female
+
+      self.gestation >= self.species['attributes']['gestation_period'].to_i
     end
 
     # represents a birth; which changes gestation status
     # and returns new animal
-    def birth
-      # raise issue if we are not a female
-      raise "NaN.. er NaF" unless female?
+    def delivers
+      assert_female
 
-      # change gestation status
-      @gestation = 0
+      # reset gestation and pregnancy status
+      self.gestation = 0
+      self.pregnant  = false
 
       # finally yield new animal to block, which should
       # be called in habitat context
       yield @species.animal
     end
+
+    private
+
+      def assert_female
+        raise "NaN.. er NaF" unless female?
+      end
+
 
   end
 end

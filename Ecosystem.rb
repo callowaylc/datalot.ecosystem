@@ -28,7 +28,6 @@ module Ecosystem
     # to the mix
     def for(species)
       @simulation.species = Species.new species
-
       habitat << adam << eve
     end
 

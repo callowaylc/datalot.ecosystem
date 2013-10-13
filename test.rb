@@ -1,9 +1,9 @@
-
-bool  = true
-value = nil
-
-if value = bool
-  puts 'true'
+def func
+  yield
 end
 
-p value
+func do
+  puts "block"
+
+end if false
+
