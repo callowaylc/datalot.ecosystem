@@ -1,9 +1,5 @@
-def func
-  yield
-end
+h = { a: 'aaa', b: 'bbb', c: 'ccc' }
+k = nil
 
-false or begin
-  puts "asdf"  
-  puts "fda"
-end
-
+h.each { |key, value | k = key; puts value; break }
+puts k

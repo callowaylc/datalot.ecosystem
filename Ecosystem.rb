@@ -97,6 +97,7 @@ module Ecosystem
   # Represents current time in the ecosystem and encapsulates broader
   # concepts like season
   # @note we should just use open struct here to automate initialize
+  # @note we are assuming hardcoded intervals here; this should be changed
   class Time
     
     def initialize(current, interval, interval_type)
@@ -105,27 +106,36 @@ module Ecosystem
       @interval_type = interval_type
     end
 
-    # determine current year
     def current_year
-
+      (@current / @interval) / 12
     end
 
     def current_month
-
+      # assumes 1 - 12 month cycle
+      (@current / @interval) % 12
     end
 
+    # determines current season based on hardcoded requirements
+    # assumes 1 - 12 month cycle
     def current_season
+      season = nil
 
+      { 
+        winter: [ 12, 1, 2  ], 
+        spring: [ 3,  4, 5  ], 
+        summer: [ 6,  7, 8  ],
+        fall:   [ 9, 10, 11 ]
+      
+      }.each do |key, range|
+        if range.include? current_month
+          season = key
+          break
+        end
+      end
+
+      season
     end
 
-    # determine number of years passed
-    def years
-      @current
-    end 
-
-    # determine season within current year
-    def season
-    end
   end
 
 
