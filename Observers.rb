@@ -96,9 +96,9 @@ module Ecosystem
         end
 
         # MATING AND DELIVERY #################################################
-        # determine if habitat can support further breeding; if
-        # the case, find available mates left in population
-        unless habitat.depleted?
+        # determine if habitat can support further breeding or we fall under 
+        # statistical sig threshold ; if the case, find available mates left in population
+        if !habitat.depleted? || rand <= .005
 
           # find available candidates within female/male population 
           females = habitat.females.reject { |animal| animal.pregnant? || !animal.fertile? }
