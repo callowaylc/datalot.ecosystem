@@ -1,10 +1,7 @@
-class Test
 
-  def initialize(&block)
-    @property = 'hello'
+h = { a: 'a', b: 'b', c: 'c' }
 
-    instance_exec 'suckit', &block
-  end
-end
-
-t = Test.new { |argument| puts argument; puts @property }
+k = nil
+h.each { |key, value| k = key}
+  
+puts k

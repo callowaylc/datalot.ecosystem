@@ -7,8 +7,6 @@ module ExtendAccessors
       define_method name.to_sym do
         instance_variable_set("@#{name}", default[0]) unless instance_variable_defined?("@#{name}")
         instance_variable_get("@#{name}")
-
-        instance_exec name.to_sym, &block
       end
     elsif block_given?
       define_method name.to_sym do
@@ -20,6 +18,25 @@ module ExtendAccessors
     end
     define_method "#{name}=".to_sym do |value|
       instance_variable_set("@#{name}",value)
+    end
+  end
+
+  def attr_changed(name)
+    define_method "#{name}=".to_sym do |value|
+
+      # retrieve old value, if it does exist
+      old = nil
+
+      begin
+        old = instance_variable_get("@#{name}")
+      rescue => ignore
+      end
+
+      instance_variable_set("@#{name}", value)
+
+      # now yield update event
+      yield(name, value, old)
+      
     end
   end
 end
