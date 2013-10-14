@@ -40,11 +40,11 @@ end
 # iterate across species/habitats and build individual
 # ecosystems for each
 
-config.species.each do |species|
-  config.habitats.each do |habitat| 
+config['species'].each do |species|
+  config['habitats'].each do |habitat| 
 
     # build ecosystem instance
-    ecosystem = Ecosystem::build {
+    ecosystem = Ecosystem.build {
       a    habitat
       with species
     }

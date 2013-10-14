@@ -8,7 +8,7 @@ require_relative 'Entities'
 module Ecosystem
 
   # creates a new builder instance and passes block
-  def build(&block)
+  def self.build(&block)
 
     Builder.new(block)
     Builder.simulation

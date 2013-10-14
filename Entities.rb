@@ -72,7 +72,7 @@ module Ecosystem
       # swing value will have a .5% value 
       # @note we are assuming month is a symbol - we may want
       # to do an explicit check here
-      base  = self['attributes'][self.time.current_month.to_s].to_i
+      base  = self['average_temperature'][self.time.current_month.to_s].to_i
       swing = rand <= 0.005 ? [*0..15].sample.to_f : [*0..5].sample.to_f
 
       # calculate and return 
@@ -109,8 +109,8 @@ module Ecosystem
 
     # refreshes food/water store based on profile
     def refresh
-      self.food  = self['attributes']['monthly_food'].to_i
-      self.water = self['attributes']['monthly_water'].to_i
+      self.food  = self['monthly_food'].to_i
+      self.water = self['monthly_water'].to_i
     end
 
   end  
@@ -213,6 +213,7 @@ module Ecosystem
       a = self['attributes']
 
       # if temperature in acceptible range reset exposure, otherwise increment exposure
+      # @todo this is ugly; find another way to express this cleanly
       self.exposure = if ((success = a['minimum_temperature']..a['maximum_temperature']).include? habitat.temperature)
         then 0
         else self.exposure + 1
