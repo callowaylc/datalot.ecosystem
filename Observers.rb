@@ -45,7 +45,6 @@ module Ecosystem
         # aware of time, but is needed now to perform uniform operations on
         # habitat
         habitat.time = time
-        p habitat.temperature
 
         
         # DEATH ###############################################################

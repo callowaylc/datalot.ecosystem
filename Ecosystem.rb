@@ -82,24 +82,28 @@ module Ecosystem
     def and_then
       history = History.new(self.habitat, self.species)
 
-      (1..self.iterations).each do 
+      (1..2).each do 
         # create a new ticker, set timespan, and then
         # tick over intervals
 
         ticker = Ticker.new(self.years)
         ticker.tick do |time|
+          puts "tick"
 
           # call changed true in order to 
           changed true
           notify_observers self, time, history
 
-          # refresh our habitat after observers have updated
-          # species/habitat
+          # break from iteration if all animals
+          # within habitat have perished
+          break if self.habitat.empty?
+
+          # otherwise refresh our habitat 
           self.habitat.refresh
 
+
+
         end until ticker.is_done?
-        
-        break
       end
 
       # finally yield with results

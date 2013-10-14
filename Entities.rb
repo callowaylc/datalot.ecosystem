@@ -59,11 +59,19 @@ module Ecosystem
       # the additional of a single species
       # @note do we need to address case of species extinction here??
       animal = self.animals.first
-      raise 'Species has expired' unless animal
 
+      if animal
+        return self.food  < animal.species['attributes']['monthly_food_consumption'].to_i  ||
+               self.water < animal.species['attributes']['monthly_water_consumption'].to_i 
+      end
 
-      self.food  < animal.species['attributes']['monthly_food_consumption'].to_i  ||
-      self.water < animal.species['attributes']['monthly_water_consumption'].to_i 
+      false
+    end
+
+    # determines if species has become extinct within
+    # habitat
+    def empty?
+      @animals.length == 0
     end
 
 
