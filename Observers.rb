@@ -45,6 +45,7 @@ module Ecosystem
         # aware of time, but is needed now to perform uniform operations on
         # habitat
         habitat.time = time
+        p habitat.temperature
 
         
         # DEATH ###############################################################
@@ -56,7 +57,6 @@ module Ecosystem
           # create proc to handle death; we are doing this is handle
           # multiple checks on death
           handle_death = lambda do |cause|
-            puts "animal #{animal.object_id} died"
             habitat.remove animal
             history.note :death, cause
           end

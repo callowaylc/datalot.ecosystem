@@ -202,7 +202,11 @@ module Ecosystem
 
     def current_month
       # assumes 1 - 12 month cycle
-      (self.current / self.interval) % 12
+      if (result = (self.current / self.interval) % 12) == 0
+        result = 12
+      end
+
+      result
     end
 
     # determines current season based on hardcoded requirements

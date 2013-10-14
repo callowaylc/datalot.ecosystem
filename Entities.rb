@@ -62,8 +62,8 @@ module Ecosystem
       raise 'Species has expired' unless animal
 
 
-      self.food   < animal.species['attributes']['monthly_food_consumption'].to_i  ||
-      self.water  < animal.species['attributes']['monthly_water_consumption'].to_i 
+      self.food  < animal.species['attributes']['monthly_food_consumption'].to_i  ||
+      self.water < animal.species['attributes']['monthly_water_consumption'].to_i 
     end
 
 
@@ -74,12 +74,20 @@ module Ecosystem
       # swing value will have a .5% value 
       # @note we are assuming month is a symbol - we may want
       # to do an explicit check here
-      base  = self['average_temperature'][self.time.current_month.to_s].to_i
+      base  = self['average_temperature'][self.time.current_season.to_s].to_i
       swing = rand <= 0.005 ? [*0..15].sample.to_f : [*0..5].sample.to_f
 
       # calculate and return 
-      base + ( swing / base * [ -1, 1 ].sample ) 
+      result = base + ( swing / base * [ -1, 1 ].sample ) 
 
+      if result == (+1.0/0.0)
+        puts "issue with time"
+        p self.time.current_month
+        #puts "#{base} and #{swing} and #{self.time.current_season.to_s}"
+        exit
+      end
+
+      result
 
     end
 
