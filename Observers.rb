@@ -16,12 +16,9 @@ module Ecosystem
       def update(simulation, time, history)
         animals  = simulation.habitat.animals
         interval = time.interval
-        puts "in species observer"
-        exit
-
+        
         # iterate through animals
         animals.each do |animal|
-
           # age our animals for given time interval
           animal.ages_for interval
 

@@ -94,7 +94,7 @@ module Ecosystem
     # be instances where we do NOT care about hash order, making this
     # inefficient
     def animals
-      @animals.to_a.shuffle
+      @animals.values.shuffle
     end
 
     def females
