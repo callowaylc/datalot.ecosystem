@@ -26,7 +26,7 @@ module Ecosystem
 
     # returns average population over full fimulation
     def average_population
-      @store[:population].inject { |sum, population| sum + population }.to_f / @store[:population].size
+      @store[:population].inject { |sum, population| sum + population }.to_f / @store[:population].length
     end
 
     # returns max population occurrence 
@@ -36,13 +36,9 @@ module Ecosystem
 
     # returns death
     def mortality_rate
-      # we are going to calculate mortality rate using aggregate
-      # of populations and total death, though i think this calculation
-      # may be wrong
-      average_deaths = @store[:deaths].inject { | sum, deaths | sum + deaths }.to_f / @store[:deaths].size 
 
-
-      average_deaths / (average_population + average_deaths)
+      # sum life and death events
+      deaths.to_f / births
     end
 
     def causes_of_death
@@ -60,19 +56,25 @@ module Ecosystem
     # returns yaml formatted representation of history 
     def to_s
       {
-        'habitat' => @habitat.to_s,
-        'species' => @species.to_s,
+        'habitat'            => @habitat.to_s,
+        'species'            => @species.to_s,
         'average population' => average_population,
-        'max population' => max_population,
-        'mortality rate' => mortality_rate,
+        'max population'     => max_population,
+        'deaths'             => deaths,
+        'births'             => births,
+        'mortality rate'     => (mortality_rate * 100).to_s + "%",
       
-      }.merge(causes_of_death).to_yaml
+      }.merge(causes_of_death).to_yaml + "\n"
 
     end
 
     private
       def deaths
         @store[:death].length
+      end
+
+      def births
+        @store[:life].length
       end
 
   end

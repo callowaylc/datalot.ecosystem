@@ -1,7 +1,5 @@
-counter = 0
+def func
+  puts "hello"
+end
 
-begin
-  puts counter
-  counter += 1
-
-end until counter >= 5
+func 1, 2, 3

@@ -45,10 +45,6 @@ module Ecosystem
         # aware of time, but is needed now to perform uniform operations on
         # habitat
         habitat.time = time
-
-        # this is temporary till we encapsulate death count to history
-        deaths = 0
-
         
         # DEATH ###############################################################
         # iterate through shuffled list of animals 
@@ -60,9 +56,9 @@ module Ecosystem
           # multiple checks on death
           handle_death = lambda do |cause|
             habitat.remove animal
-            history.note :death, cause
 
-            deaths += 1
+            # track cause of death
+            history.note :death, cause
           end
 
           # first we address an animals interactions with the habitat;
@@ -123,13 +119,16 @@ module Ecosystem
           female.delivers do |animal|
             habitat << animal
 
+            # track life event and use sex as a metric; this could be useful
+            # later but is not used for later calculations
+            history.note :life, animal.sex
+
           end if female.is_ready_to_deliver?
         end
 
         # HISTORY/METRICS #####################################################
         # record population metrics in history
         history.note :population, habitat.population
-        history.note :deaths, deaths
 
       end
     end

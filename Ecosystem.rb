@@ -82,6 +82,9 @@ module Ecosystem
     # block is given, history will be yieled to block
     def and_then
       history = History.new(self.habitat, self.species)
+
+      # record start time for habitat/species
+      # @note using this for profiling
       start = Time.new
 
       (1..self.iterations).each do 
