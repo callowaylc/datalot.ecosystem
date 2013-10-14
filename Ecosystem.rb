@@ -76,6 +76,7 @@ module Ecosystem
       self.years = years
     end
 
+
     # runs simulation and collects historical data; if a 
     # block is given, history will be yieled to block
     def and_then
@@ -86,14 +87,15 @@ module Ecosystem
         # tick over intervals
         ticker = Ticker.new(self.years)
         ticker.tick do |time|
-
+          changed true
           notify_observers self, time, history
+
 
         end until ticker.is_done?
       end
 
       # finally yield with results
-      yield(history) if block_given
+      yield(history) if block_given?
     end
 
     private 
@@ -121,6 +123,7 @@ module Ecosystem
 
     # returns average population over full fimulation
     def average_population
+      p @store;exit
       @store[:population].inject { |sum, population| sum + population }.to_f / @store[:population].size
     end
 

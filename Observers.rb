@@ -7,6 +7,7 @@ module Ecosystem
 
     class Observer
       include Singleton
+
     end
 
     # responsible for updating species specific context
@@ -15,6 +16,8 @@ module Ecosystem
       def update(simulation, time, history)
         animals  = simulation.habitat.animals
         interval = time.interval
+        puts "in species observer"
+        exit
 
         # iterate through animals
         animals.each do |animal|
@@ -40,6 +43,8 @@ module Ecosystem
       def update(simulation, time, history)
         habitat  = simulation.habitat        
         interval = time.interval
+        puts "in habitat observer"
+        exit
 
         # assign current time to habitat
         # @todo remove this later because habitat should not be contextually

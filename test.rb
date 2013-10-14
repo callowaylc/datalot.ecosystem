@@ -1,5 +1,23 @@
-def function(key: 'one')
-  puts key
+require 'observer'
+
+class Test
+  include Observable
+
+  def initialize
+    add_observer(Observer.new)
+  end
+
+  def test
+    changed true
+    notify_observers
+  end
 end
 
-function()
+class Observer
+  def update
+    puts "called updated"
+  end
+end
+
+t = Test.new
+t.test
