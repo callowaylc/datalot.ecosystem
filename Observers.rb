@@ -46,6 +46,9 @@ module Ecosystem
         # habitat
         habitat.time = time
 
+        # this is temporary till we encapsulate death count to history
+        deaths = 0
+
         
         # DEATH ###############################################################
         # iterate through shuffled list of animals 
@@ -58,6 +61,8 @@ module Ecosystem
           handle_death = lambda do |cause|
             habitat.remove animal
             history.note :death, cause
+
+            deaths += 1
           end
 
           # first we address an animals interactions with the habitat;
@@ -124,6 +129,7 @@ module Ecosystem
         # HISTORY/METRICS #####################################################
         # record population metrics in history
         history.note :population, habitat.population
+        history.note :deaths, deaths
 
       end
     end
