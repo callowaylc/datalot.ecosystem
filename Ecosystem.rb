@@ -11,7 +11,8 @@ module Ecosystem
   def self.build(&block)
 
     Builder.new(block)
-    Builder.simulation
+    puts Builder.simulation
+    exit;
   end
 
   # provides fluent interface for building ecosystem cycle instance that can 
