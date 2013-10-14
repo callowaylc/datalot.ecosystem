@@ -73,9 +73,7 @@ module Ecosystem
       # @note we are assuming month is a symbol - we may want
       # to do an explicit check here
       base  = self['attributes'][self.time.current_month.to_s].to_i
-      swing = rand <= 0.005 
-        ? [*0..15].sample.to_f
-        : [*0..5].sample.to_f
+      swing = rand <= 0.005 ? [*0..15].sample.to_f : [*0..5].sample.to_f
 
       # calculate and return 
       base + ( swing / base * [ -1, 1 ].sample ) 
@@ -210,14 +208,15 @@ module Ecosystem
     end
 
     # checks exposure against current temperature
-    def exposed_to(temperature)
+    def exposed_to(habitat)
       # just performing a shortcut here
       a = self['attributes']
 
       # if temperature in acceptible range reset exposure, otherwise increment exposure
-      self.exposure = (success = a['minimum_temperature']..a['maximum_temperature']).include? temperature)
-        ? 0
-        : self.exposure += 1
+      self.exposure = if ((success = a['minimum_temperature']..a['maximum_temperature']).include? habitat.temperature)
+        then 0
+        else self.exposure + 1
+      end
 
       success
     end
