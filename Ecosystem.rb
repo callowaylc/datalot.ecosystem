@@ -85,17 +85,21 @@ module Ecosystem
       (1..self.iterations).each do 
         # create a new ticker, set timespan, and then
         # tick over intervals
+
         ticker = Ticker.new(self.years)
         ticker.tick do |time|
-          puts "tick"
+
+          # call changed true in order to 
           changed true
           notify_observers self, time, history
 
-          # refresh our habitat
+          # refresh our habitat after observers have updated
+          # species/habitat
           self.habitat.refresh
 
         end until ticker.is_done?
-        exit
+        
+        break
       end
 
       # finally yield with results

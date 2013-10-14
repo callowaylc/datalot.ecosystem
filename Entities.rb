@@ -197,8 +197,6 @@ module Ecosystem
 
       self.class.rules.each do |property, rule|
         if (died = instance_eval(&rule))
-          puts "animal #{self.object_id} #{self.sex} age is #{self.age} died of #{property}"
-
           cause = property
           break
         end
@@ -287,7 +285,6 @@ module Ecosystem
     # represents the mating act between two animals; is contextually
     # aware of current self sex
     def mate(animal)
-      puts "animale:#{self.object_id}/#{self.sex} mates with #{animal.object_id}/#{animal.sex}"
       if female?
         self.pregnant = true
 
