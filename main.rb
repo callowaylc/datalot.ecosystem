@@ -58,9 +58,5 @@ config['species'].each do |species|
       and_then { |result| puts result } 
     }
 
-    break
-
   end
-
-  break
 end

@@ -105,10 +105,9 @@ module Ecosystem
 
 
         end until ticker.is_done?
-        break
       end
 
-      puts Time.new - start
+      puts "took #{Time.new - start}!"
 
 
       # finally yield with results

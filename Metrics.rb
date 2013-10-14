@@ -39,7 +39,10 @@ module Ecosystem
       # we are going to calculate mortality rate using aggregate
       # of populations and total death, though i think this calculation
       # may be wrong
-     @store[:population].inject { | sum, population | sum + population } / deaths.to_f
+      average_deaths = @store[:deaths].inject { | sum, deaths | sum + deaths }.to_f / @store[:deaths].size 
+
+
+      average_deaths / (average_population + average_deaths)
     end
 
     def causes_of_death
