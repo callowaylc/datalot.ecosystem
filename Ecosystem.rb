@@ -91,6 +91,8 @@ module Ecosystem
           changed true
           notify_observers self, time, history
 
+          # refresh our habitat
+          self.habitat.refresh
 
         end until ticker.is_done?
         exit
