@@ -62,8 +62,8 @@ module Ecosystem
       raise 'Species has expired' unless animal
 
 
-      self.food   >= animal.species['attributes']['monthly_food_consumption'].to_i  &&
-      self.water  >= animal.species['attributes']['monthly_water_consumption'].to_i 
+      self.food   < animal.species['attributes']['monthly_food_consumption'].to_i  ||
+      self.water  < animal.species['attributes']['monthly_water_consumption'].to_i 
     end
 
 
@@ -300,7 +300,8 @@ module Ecosystem
 
     # @note problem with methods below is they do not fit into
     # context of a male member of the species; abstraction should
-    # reflect this - revisit
+    # reflect this - revisit - perhaps mix in female module in the
+    # event that animal is female..
 
     # checks to determine if female is pregnant
     def pregnant?
@@ -310,10 +311,10 @@ module Ecosystem
     end
 
     # checks to determine if female has reached gestation period
-    def is_ready_to_deliver
+    def is_ready_to_deliver?
       assert_female
 
-      self.gestation >= self.species['attributes']['gestation_period'].to_i
+      self.gestation >= self.species['attributes']['gestation_period'].to_i.months
     end
 
     # represents a birth; which changes gestation status
