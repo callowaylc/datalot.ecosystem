@@ -52,8 +52,8 @@ config['species'].each do |species|
     # now cycle over iterations/years; use results defined to_s method
     # to print to stdout
     ecosystem.simulate { 
-      through config.years 
-      over    onfig.iterations
+      through config['years'] 
+      over    config['iterations']
 
       and_then { |result| puts result } 
     }

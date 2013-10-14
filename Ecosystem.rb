@@ -10,9 +10,9 @@ module Ecosystem
   # creates a new builder instance and passes block
   def self.build(&block)
 
-    Builder.new(block)
-    puts Builder.simulation
-    exit;
+    # create builder and return simulation instance
+    builder = Builder.new(block)
+    builder.simulation
   end
 
   # provides fluent interface for building ecosystem cycle instance that can 
@@ -79,7 +79,7 @@ module Ecosystem
     # runs simulation and collects historical data; if a 
     # block is given, history will be yieled to block
     def and_then
-      history = History.new
+      history = History.new(self.habitat, self.iterations)
 
       (1..self.iterations).each do 
         # create a new ticker, set timespan, and then
