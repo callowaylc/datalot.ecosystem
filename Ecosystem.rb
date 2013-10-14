@@ -90,7 +90,6 @@ module Ecosystem
           puts "tick"
           changed true
           notify_observers self, time, history
-          exit
 
 
         end until ticker.is_done?

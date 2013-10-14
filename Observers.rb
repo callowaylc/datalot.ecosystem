@@ -56,6 +56,7 @@ module Ecosystem
           # create proc to handle death; we are doing this is handle
           # multiple checks on death
           handle_death = lambda do |cause|
+            puts "animal #{animal.object_id} died"
             habitat.remove animal
             history.note :death, cause
           end

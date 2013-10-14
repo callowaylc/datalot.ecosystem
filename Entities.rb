@@ -149,7 +149,7 @@ module Ecosystem
     # an external dsl
     # @note change hardcoded values to constants
     # @note need to consider interval; here we are tightly coupled to months
-    dies_of :age        , proc { self.age        > self.species['attributes']['life_span'].to_i.months }
+    dies_of :age        , proc { self.age        > self.species['attributes']['life_span'].to_i.years }
     dies_of :exposure   , proc { self.exposure   > 1.month }
     dies_of :thirst     , proc { self.thirst     > 1.month }
     dies_of :starvation , proc { self.starvation > 3.months } 
@@ -180,8 +180,8 @@ module Ecosystem
     end
 
     def fertile?
-      self.age >= self.species['attributes']['minimum_breeding_age'].to_i &&
-      self.age <= self.species['attributes']['maximum_breeding_age'].to_i
+      self.age >= self.species['attributes']['minimum_breeding_age'].to_i.years &&
+      self.age <= self.species['attributes']['maximum_breeding_age'].to_i.years
     end
 
     # determines if animal survived given current properties
@@ -194,10 +194,11 @@ module Ecosystem
       cause = nil
       died  = false
 
-      puts "animal #{self.object_id} #{self.sex} age is #{self.age}"
 
       self.class.rules.each do |property, rule|
         if (died = instance_eval(&rule))
+          puts "animal #{self.object_id} #{self.sex} age is #{self.age} died of #{property}"
+
           cause = property
           break
         end
