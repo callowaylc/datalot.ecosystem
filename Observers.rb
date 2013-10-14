@@ -40,14 +40,15 @@ module Ecosystem
       def update(simulation, time, history)
         habitat  = simulation.habitat        
         interval = time.interval
-        puts "in habitat observer"
-        exit
+
 
         # assign current time to habitat
         # @todo remove this later because habitat should not be contextually
         # aware of time, but is needed now to perform uniform operations on
         # habitat
         habitat.time = time
+
+        puts time; exit
 
         
         # DEATH ###############################################################
