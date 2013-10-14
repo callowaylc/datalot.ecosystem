@@ -1,7 +1,5 @@
-a = if true
-  then 1
-else
-  0
+def function(key: 'one')
+  puts key
 end
 
-puts a
+function()

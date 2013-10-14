@@ -38,11 +38,11 @@ module Ecosystem
     private
 
     def adam
-      @simulation.species.animal :male
+      @simulation.species.animal sex: :male
     end
 
     def eve
-      @simulation.species.animal :female
+      @simulation.species.animal sex: :female
     end 
 
   end

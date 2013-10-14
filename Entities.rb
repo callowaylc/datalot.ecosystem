@@ -22,11 +22,13 @@ module Ecosystem
   # Represents a single habitat-type
   class Habitat < Entity
     attr_accessor :food, :water, :time
-    attr_accessor_with_default :animals, { }
 
     def initialize(hash)
       super(hash)
       
+      # set animals instance property
+      @animals = { }
+
       # set food/water stores to default
       refresh
     end
