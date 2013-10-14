@@ -230,7 +230,6 @@ module Ecosystem
 
     # iterate the passage of time by interval constant
     def tick
-
       # increment time
       @current += INTERVAL 
 
@@ -239,7 +238,7 @@ module Ecosystem
 
     # determines if there is time left in current iteration
     def is_done?
-      @current >= @total
+      @current >= @years
     end
 
     # reset ticker to 0 time
