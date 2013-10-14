@@ -46,16 +46,16 @@ config.species.each do |species|
     # build ecosystem instance
     ecosystem = Ecosystem::build {
       a    habitat
-      for  species
+      with species
     }
 
     # now cycle over iterations/years; use results defined to_s method
     # to print to stdout
     ecosystem.simulate { 
-      for   config.years 
-      over  config.iterations
+      through config.years 
+      over    onfig.iterations
 
-      then { |result| puts result } 
+      and_then { |result| puts result } 
     }
 
   end

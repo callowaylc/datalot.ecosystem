@@ -30,7 +30,7 @@ module Ecosystem
 
     # determine species and then add adam/eve
     # to the mix
-    def for(species)
+    def with(species)
       @simulation.species = Species.new species
       @simulation.habitat << adam << eve
     end
@@ -71,13 +71,13 @@ module Ecosystem
       self.iterations = iterations
     end
 
-    def for(years)
+    def through(years)
       self.years = years
     end
 
     # runs simulation and collects historical data; if a 
     # block is given, history will be yieled to block
-    def then
+    def and_then
       history = History.new
 
       (1..self.iterations).each do 
@@ -158,7 +158,7 @@ module Ecosystem
         'mortality rate' => mortality_rate,
       
       }.merge(causes_of_death).to_yaml
-      
+
     end
 
     private
