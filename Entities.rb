@@ -86,17 +86,7 @@ module Ecosystem
       swing = rand <= 0.005 ? [*0..15].sample.to_f : [*0..5].sample.to_f
 
       # calculate and return 
-      result = base + ( swing / base * [ -1, 1 ].sample ) 
-
-      if result == (+1.0/0.0)
-        puts "issue with time"
-        p self.time.current_month
-        #puts "#{base} and #{swing} and #{self.time.current_season.to_s}"
-        exit
-      end
-
-      result
-
+      base + ( swing / base * [ -1, 1 ].sample ) 
     end
 
 
@@ -233,9 +223,8 @@ module Ecosystem
 
       # if temperature in acceptible range reset exposure, otherwise increment exposure
       # @todo this is ugly; find another way to express this cleanly
-      self.exposure = if ((success = a['minimum_temperature']..a['maximum_temperature']).include? habitat.temperature)
-        then 0
-        else self.exposure + 1
+      if ((success = a['minimum_temperature']..a['maximum_temperature']).include? habitat.temperature)
+        self.exposure = 0
       end
 
       success

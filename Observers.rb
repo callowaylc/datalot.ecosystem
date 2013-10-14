@@ -71,7 +71,9 @@ module Ecosystem
             %i{ drinks_from thirsts_for },
             %i{ exposed_to  exposed_for }
           
-          ].each do |actions|
+          # shuffle environmental interactions to simulate random
+          # the idea of random interaction with the environment
+          ].shuffle.each do |actions|
 
             # first thing we need to check is if the animal died;
             # if the case, we remove from habitat and note cause
