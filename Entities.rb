@@ -73,7 +73,7 @@ module Ecosystem
       # @note we are assuming month is a symbol - we may want
       # to do an explicit check here
       base  = self['attributes'][self.time.current_month.to_s].to_i
-      swing = rand <= .005 
+      swing = rand <= 0.005 
         ? [*0..15].sample.to_f
         : [*0..5].sample.to_f
 

@@ -67,8 +67,8 @@ module Ecosystem
           # we check if the animal is still alive
           # @note below is awkward; need to change interface
           interactions = [
-            %i{ eats_from   starves_for }
-            %i{ drinks_from thirsts_for }
+            %i{ eats_from   starves_for },
+            %i{ drinks_from thirsts_for },
             %i{ exposed_to  exposed_for }
           
           ].each do |actions|
@@ -76,7 +76,7 @@ module Ecosystem
             # first thing we need to check is if the animal died;
             # if the case, we remove from habitat and note cause
             # of death
-            if died = animal.died? &handle_death
+            if (died = animal.died? &handle_death)
              break
             
             # otherwise the animal is still alive and we perform an interaction
@@ -100,7 +100,7 @@ module Ecosystem
         # MATING AND DELIVERY #################################################
         # determine if habitat can support further breeding or we fall under 
         # statistical sig threshold ; if the case, find available mates left in population
-        if !habitat.depleted? || rand <= .005
+        if !habitat.depleted? || rand <= 0.005
 
           # find available candidates within female/male population 
           females = habitat.females.reject { |animal| animal.pregnant? || !animal.fertile? }
