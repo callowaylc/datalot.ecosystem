@@ -81,14 +81,14 @@ module Ecosystem
     # block is given, history will be yieled to block
     def and_then
       history = History.new(self.habitat, self.species)
+      start = Time.new
 
-      (1..2).each do 
+      (1..self.iterations).each do 
         # create a new ticker, set timespan, and then
         # tick over intervals
 
         ticker = Ticker.new(self.years)
         ticker.tick do |time|
-          puts "tick"
 
           # call changed true in order to 
           changed true
@@ -105,6 +105,9 @@ module Ecosystem
 
         end until ticker.is_done?
       end
+
+      puts Time.new - start
+
 
       # finally yield with results
       yield(history) if block_given?
@@ -192,7 +195,7 @@ module Ecosystem
   # concepts like season
   # @note we should just use open struct here to automate initialize
   # @note we are assuming hardcoded interval types here; this should be changed
-  class Time
+  class TimeContext
     attr_accessor :interval, :current
     
     def initialize(current, interval)
@@ -255,7 +258,7 @@ module Ecosystem
       # increment time
       @current += INTERVAL 
 
-      yield Time.new(@current, INTERVAL)
+      yield TimeContext.new(@current, INTERVAL)
     end
 
     # determines if there is time left in current iteration
