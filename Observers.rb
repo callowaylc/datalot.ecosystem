@@ -101,6 +101,7 @@ module Ecosystem
         # determine if habitat can support further breeding or we fall under 
         # statistical sig threshold ; if the case, find available mates left in population
         if !habitat.depleted? || rand <= 0.005
+          exit
 
           # find available candidates within female/male population 
           females = habitat.females.reject { |animal| animal.pregnant? || !animal.fertile? }
