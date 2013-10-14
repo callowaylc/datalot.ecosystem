@@ -84,8 +84,6 @@ module Ecosystem
     end
 
 
-
-
     # return shuffled group of animals so we can avoid issues
     # related to preference based on queue order; we return as
     # array since we only care about hash in the context of removing
@@ -140,6 +138,8 @@ module Ecosystem
     @rules = { }
 
     class << self
+      attr_reader :rules
+
       def dies_of(type, block)
         @rules[type] = block
       end
@@ -149,10 +149,10 @@ module Ecosystem
     # an external dsl
     # @note change hardcoded values to constants
     # @note need to consider interval; here we are tightly coupled to months
-    dies_of :age        , lambda { @age        > self['attributes']['life_span'].to_i.months }
-    dies_of :exposure   , lambda { @exposure   > 1.month }
-    dies_of :thirst     , lambda { @thirst     > 1.month }
-    dies_of :starvation , lambda { @starvation > 3.months } 
+    dies_of :age        , proc { @age        > self.species['attributes']['life_span'].to_i.months }
+    dies_of :exposure   , proc { @exposure   > 1.month }
+    dies_of :thirst     , proc { @thirst     > 1.month }
+    dies_of :starvation , proc { @starvation > 3.months } 
 
 
     
@@ -195,6 +195,9 @@ module Ecosystem
       died  = false
 
       self.class.rules.each do |property, rule|
+        instance_eval &rule
+        exit
+
         if (died = instance_eval(&rule))
           cause = property
           break

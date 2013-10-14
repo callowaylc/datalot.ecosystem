@@ -48,8 +48,6 @@ module Ecosystem
         # habitat
         habitat.time = time
 
-        puts time; exit
-
         
         # DEATH ###############################################################
         # iterate through shuffled list of animals 
