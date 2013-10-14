@@ -1,5 +1,4 @@
-h = { a: 'aaa', b: 'bbb', c: 'ccc' }
-k = nil
+a = { a: 'a' }
+b = { b: 'b' }
 
-h.each { |key, value | k = key; puts value; break }
-puts k
+puts a + b

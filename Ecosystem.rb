@@ -1,23 +1,27 @@
 # Author: Christian Calloway callowaylc@gmail
 require 'Observable'
 require 'singleton'
+require 'yaml'
 require_relative 'Observers'
-require_relative 'Facets'
+require_relative 'Entities'
 
 module Ecosystem
 
   # creates a new builder instance and passes block
   def build(&block)
+
     Builder.new(block)
+    Builder.simulation
   end
 
   # provides fluent interface for building ecosystem cycle instance that can 
   # be iterated over
   class Builder
+    attr_reader :simulation
 
-    def initialize(&block)
+    def initialize(block)
       @simulation = Simulator.new
-      instance_eval(block)
+      instance_eval(&block)
     end
 
     def a(habitat)
@@ -28,10 +32,11 @@ module Ecosystem
     # to the mix
     def for(species)
       @simulation.species = Species.new species
-      habitat << adam << eve
+      @simulation.habitat << adam << eve
     end
 
     private
+
     def adam
       @simulation.species.animal :male
     end
@@ -44,53 +49,123 @@ module Ecosystem
 
   # provides fluent interface for cycling over time interval
   class Simulator
-    attr_accessor :years, :iterations
+    # mixin observable module; this will be used to update
+    # habitat and species after interval events
+    include Observable
 
-    def cycle(&block)
-      instance_eval(block)
+    attr_accessor :years, :iterations, :habitat, :species
+
+    def initialize
+      # add observers for update events
+      add_observer(Observers::Species.instance)
+      add_observer(Observers::Habitat.instance)      
     end
 
-    def over(years)
-      @years = years
+    # simulate, over and for are all "interface" methods intended
+    # only for idiomatic expression
+    def simulate(&block)
+      instance_eval(&block)
     end
 
-    def for(iterations)
-      @iterations = iterations
+    def over(iterations)
+      self.iterations = iterations
     end
 
-    # gets results and yields them 
+    def for(years)
+      self.years = years
+    end
+
+    # runs simulation and collects historical data; if a 
+    # block is given, history will be yieled to block
     def then
-      results = nil
+      history = History.new
 
-      # create a new ticker, set timespan, and then
-      # tick over intervals
-      ticker = Ticker.new(@years)
-      ticker.tick do |t|
+      (1..self.iterations).each do 
+        # create a new ticker, set timespan, and then
+        # tick over intervals
+        ticker = Ticker.new(self.years)
+        ticker.tick do |time|
 
-        # run update on simulation with time context
-        update Time.new(t.current)
+          notify_observers self, time, history
 
-      end until ticker.is_done?
+        end until ticker.is_done?
+      end
 
       # finally yield with results
-      yield(results) if block_given
+      yield(history) if block_given
     end
 
     private 
-
-    def update(time)
-      # do updatin
-
-      # notify observers that simulation is updating
-      notify_observers(self, time)
-    end
-
   end
 
 
 
   # Responsible tracking metrics during simulation
   class History
+
+    def initialize (habitat, species)
+      @store   = { }
+      @habitat = habitat
+      @species = species
+    end
+
+    # responsible for recording historical events
+    def note(type, value)
+      # create array if store[stype] is currently nil
+      @store[type] = [ ] if @store[type].nil?
+
+      # add value to store type
+      @store[type] << value
+    end
+
+    # returns average population over full fimulation
+    def average_population
+      @store[:population].inject { |sum, population| sum + population }.to_f / @store[:population].size
+    end
+
+    # returns max population occurrence 
+    def max_population
+      @store[:population].max
+    end
+
+    # returns death
+    def mortality_rate
+      # we are going to calculate mortality rate using aggregate
+      # of populations and total death, though i think this calculation
+      # may be wrong
+      deaths.to_f /  @store[:population].inject { | sum, population | sum + population }
+    end
+
+    def causes_of_death
+      # because of the way we have elected to store values, 
+      # we will need to aggregate causes of death
+      aggregates = Hash.new(0)
+
+      @store[:death].each do |cause|
+        aggregates[cause] += 1 
+      end
+
+      aggregates
+    end
+
+    # returns yaml formatted representation of history 
+    def to_s
+      {
+        'habitat' => @habitat,
+        'species' => @species,
+        'average population' => average_population,
+        'max population' => max_population,
+        'mortality rate' => mortality_rate,
+      
+      }.merge(causes_of_death).to_yaml
+      
+    end
+
+    private
+      def deaths
+        @store[:death].length
+      end
+
   end
 
 
@@ -99,20 +174,20 @@ module Ecosystem
   # @note we should just use open struct here to automate initialize
   # @note we are assuming hardcoded interval types here; this should be changed
   class Time
-    attr_accessor :interval
+    attr_accessor :interval, :current
     
     def initialize(current, interval)
-      @current      = current
+      self.current  = current
       self.interval = interval
     end
 
     def current_year
-      (@current / @interval) / 12
+      (self.current / self.interval) / 12
     end
 
     def current_month
       # assumes 1 - 12 month cycle
-      (@current / @interval) % 12
+      (self.current / self.interval) % 12
     end
 
     # determines current season based on hardcoded requirements
@@ -141,9 +216,6 @@ module Ecosystem
 
   # Represents intervals of time passing during simulation
   class Ticker
-    # mixin observable module; this will be used to update
-    # habitat and species after interval events
-    include Observable
 
     # because we assume passage of time as a constant
     # we set as a constant
@@ -153,25 +225,15 @@ module Ecosystem
     def initialize(years)
       @current = 0
       @years   = years
-
-      # add observers for tick events
-      add_observer(Observers::Species.instance)
-      add_observer(Observers::Habitat.instance)
-
     end    
 
     # iterate the passage of time by interval constant
-    def tick(habitat)
+    def tick
 
       # increment time
       @current += INTERVAL 
 
-      # notify observers of the passage of time; we are passing self
-      # here which tightly couples Ticker to observer but in the 
-      # interest of a solution..
-      # @note passing interval here helps decouple observers from ticker,
-      # but we shouldnt have to pass the same value repeatedly..
-      notify_observers habitat, Time.new(@current, INTERVAL)
+      yield Time.new(@current, INTERVAL)
     end
 
     # determines if there is time left in current iteration

@@ -12,7 +12,7 @@ module Ecosystem
     # responsible for updating species specific context
     class Species < Observer
       
-      def update(simulation, time)
+      def update(simulation, time, history)
         animals  = simulation.habitat.animals
         interval = time.interval
 
@@ -37,7 +37,7 @@ module Ecosystem
 
     # responsible for updating habitat specific context
     class Habitat < Observer
-      def update(simulation, time)
+      def update(simulation, time, history)
         habitat  = simulation.habitat        
         interval = time.interval
 
@@ -58,7 +58,7 @@ module Ecosystem
           # multiple checks on death
           handle_death = lambda do |cause|
             habitat.remove animal
-            history.note_a :death, from: cause
+            history.note :death, cause
           end
 
           # first we address an animals interactions with the habitat;
@@ -124,6 +124,7 @@ module Ecosystem
 
         # HISTORY/METRICS #####################################################
         # record population metrics in history
+        history.note :population, habitat.population
 
       end
     end

@@ -3,7 +3,7 @@
 # Defines our "facets" (habitat, species, animal) within the ecosystem
 module Ecosystem
 
-   class Facet 
+   class Entity 
 
     def initialize(hash)
       @profile = hash
@@ -13,10 +13,14 @@ module Ecosystem
     def [](key)
       @profile[key]
     end
+
+    def to_s
+      self['name']
+    end
   end
 
   # Represents a single habitat-type
-  class Habitat < Facet
+  class Habitat < Entity
     attr_accessor :food, :water, :time
     attr_accessor_with_default :animals, { }
 
@@ -38,6 +42,10 @@ module Ecosystem
 
     def remove(animal)
       @animals.delete animal
+    end
+
+    def population
+      @animals.length
     end
 
     # determines if habitat has been depleted to
@@ -110,7 +118,7 @@ module Ecosystem
   end  
 
   # Represents a single species-type
-  class Species < Facet
+  class Species < Entity
     
     # creates a new animal of species type
     def animal(sex:[ :male, :female ].sample)
@@ -120,6 +128,8 @@ module Ecosystem
       end 
 
     end
+
+
   end
 
   # Represents a single animal
