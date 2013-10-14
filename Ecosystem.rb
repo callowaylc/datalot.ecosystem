@@ -69,11 +69,11 @@ module Ecosystem
     end
 
     def over(iterations)
-      self.iterations = iterations
+      self.iterations = iterations.to_i
     end
 
     def through(years)
-      self.years = years
+      self.years = years.to_i.years
     end
 
 
@@ -87,11 +87,14 @@ module Ecosystem
         # tick over intervals
         ticker = Ticker.new(self.years)
         ticker.tick do |time|
+          puts "tick"
           changed true
           notify_observers self, time, history
+          exit
 
 
         end until ticker.is_done?
+        exit
       end
 
       # finally yield with results
@@ -229,9 +232,9 @@ module Ecosystem
     INTERVAL = 1.month
 
     # initialize time and set current time
-    def initialize(years)
+    def initialize(total)
       @current = 0
-      @years   = years
+      @total   = total
     end    
 
     # iterate the passage of time by interval constant
@@ -244,7 +247,7 @@ module Ecosystem
 
     # determines if there is time left in current iteration
     def is_done?
-      @current >= @years
+      @current >= @total
     end
 
     # reset ticker to 0 time

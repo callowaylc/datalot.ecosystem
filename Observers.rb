@@ -27,8 +27,6 @@ module Ecosystem
           if animal.female? && animal.pregnant?
             animal.gestates_for interval
           end
-
-
         end
       end
       

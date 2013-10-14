@@ -194,6 +194,8 @@ module Ecosystem
       cause = nil
       died  = false
 
+      puts "animal #{self.object_id} #{self.sex} age is #{self.age}"
+
       self.class.rules.each do |property, rule|
         if (died = instance_eval(&rule))
           cause = property
