@@ -80,7 +80,7 @@ module Ecosystem
     # runs simulation and collects historical data; if a 
     # block is given, history will be yieled to block
     def and_then
-      history = History.new(self.habitat, self.iterations)
+      history = History.new(self.habitat, self.species)
 
       (1..self.iterations).each do 
         # create a new ticker, set timespan, and then
@@ -107,9 +107,13 @@ module Ecosystem
   class History
 
     def initialize (habitat, species)
-      @store   = { }
+      @store   = { 
+        population: [ ],
+        death:      [ ]
+      }
       @habitat = habitat
       @species = species
+
     end
 
     # responsible for recording historical events
@@ -123,7 +127,6 @@ module Ecosystem
 
     # returns average population over full fimulation
     def average_population
-      p @store;exit
       @store[:population].inject { |sum, population| sum + population }.to_f / @store[:population].size
     end
 
@@ -155,8 +158,8 @@ module Ecosystem
     # returns yaml formatted representation of history 
     def to_s
       {
-        'habitat' => @habitat,
-        'species' => @species,
+        'habitat' => @habitat.to_s,
+        'species' => @species.to_s,
         'average population' => average_population,
         'max population' => max_population,
         'mortality rate' => mortality_rate,
