@@ -52,19 +52,19 @@ module Ecosystem
         # iterate through shuffled list of animals 
         habitat.animals.each do |animal|
 
-          # first we address an animals interactions with the habitat;
-          # we do this by iterating through an array of symbol representing
-          # interactions with the environment - before running an interaction
-          # we check if the animal is still alive
           died = false
 
-
+          # create proc to handle death; we are doing this is handle
+          # multiple checks on death
           handle_death = lambda do |cause|
             habitat.remove animal
             history.note_a :death, from: cause
           end
 
-          # @note I'd like to encapsulate the metrics of death here
+          # first we address an animals interactions with the habitat;
+          # we do this by iterating through an array of symbol representing
+          # interactions with the environment - before running an interaction
+          # we check if the animal is still alive
           # @note below is awkward; need to change interface
           interactions = [
             %i{ eats_from   starves_for }
@@ -77,42 +77,23 @@ module Ecosystem
             # if the case, we remove from habitat and note cause
             # of death
             if died = animal.died? &handle_death
-              # remove from habitat
-              habitat.remove animal
-
-              # store history of cause of death
-              # still need to determine how this looks
-              history.something cause
+             break
             
             # otherwise the animal is still alive and we perform an interaction
             # on the environment
-            end or begin       
-
+            else       
               # assigning to scalars to make a bit more interactive
               interacts_with, suffers_for = actions
 
               # perform actual interaction or increment intervals of suffering
               animal.send(interacts_with, habitat) or animal.send(suffers_for, interval)
             end
-
-            # if our animal has died we break from a "interactions"
-            # loop as the animal obviously no longer needs to interact
-            # with the environment
-            died && break
-         
           end
 
           # check if animal died after last iteration
           # @todo this is really awkward and we need to update the interface
           # for checking animal death
-          died || animal.died? do |cause|
-            # remove from habitat
-            habitat.remove animal
-
-            # store history of cause of death
-            # still need to determine how this looks
-            history.something cause  
-          end
+          animal.died? &handle_death unless died
 
         end
 
