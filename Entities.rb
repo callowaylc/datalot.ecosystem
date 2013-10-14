@@ -149,10 +149,10 @@ module Ecosystem
     # an external dsl
     # @note change hardcoded values to constants
     # @note need to consider interval; here we are tightly coupled to months
-    dies_of :age        , proc { @age        > self.species['attributes']['life_span'].to_i.months }
-    dies_of :exposure   , proc { @exposure   > 1.month }
-    dies_of :thirst     , proc { @thirst     > 1.month }
-    dies_of :starvation , proc { @starvation > 3.months } 
+    dies_of :age        , proc { self.age        > self.species['attributes']['life_span'].to_i.months }
+    dies_of :exposure   , proc { self.exposure   > 1.month }
+    dies_of :thirst     , proc { self.thirst     > 1.month }
+    dies_of :starvation , proc { self.starvation > 3.months } 
 
 
     
@@ -195,9 +195,6 @@ module Ecosystem
       died  = false
 
       self.class.rules.each do |property, rule|
-        instance_eval &rule
-        exit
-
         if (died = instance_eval(&rule))
           cause = property
           break
@@ -215,7 +212,7 @@ module Ecosystem
     # checks exposure against current temperature
     def exposed_to(habitat)
       # just performing a shortcut here
-      a = self['attributes']
+      a = self.species['attributes']
 
       # if temperature in acceptible range reset exposure, otherwise increment exposure
       # @todo this is ugly; find another way to express this cleanly
