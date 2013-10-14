@@ -1,5 +1,5 @@
 # Author: Christian Calloway callowaylc@gmail
-require 'Observable'
+require 'observer'
 require 'singleton'
 require 'yaml'
 require_relative 'Observers'
